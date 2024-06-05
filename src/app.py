@@ -81,21 +81,21 @@ def create_animation(frames, time_steps):
 
 current_directory = os.path.dirname(__file__)
 print(current_directory)
-file_path = os.path.join(current_directory, 'resources', 'demo', '*.csv')
-
-print("Paths using OS:", file_path)
 
 
-
-globpath = glob.glob('data/*.csv')  # Update with your actual directory path
+globpath = glob.glob('data\*.csv')  # Update with your actual directory path
   # Update with your actual directory path
 print(globpath)
-print(file_path)
 
 
+
+datapath = os.path.join(current_directory, 'data', '*.csv')
+
+datapathglob = glob.glob(datapath)
+print("Example file path:", datapathglob[0])
 
 # Read the CSV files
-data = read_csv_files(globpath)
+data = read_csv_files(datapathglob)
 
 
 
