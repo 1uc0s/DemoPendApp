@@ -4,6 +4,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import plotly.io as pio
 import glob
+import os
 
 # Set Plotly to render charts using the web browser
 # pio.renderers.default = "browser"
@@ -75,12 +76,26 @@ def create_animation(frames, time_steps):
 
 # List of CSV file paths
 # filepaths = ['../datasets/pendulumR0.csv','../datasets/pendulumR0_2.csv']  # Update with your actual file paths
-filepaths = glob.glob('resources/demo/*.csv')  # Update with your actual directory path
 
-print("filepaths:", filepaths)
+
+
+current_directory = os.path.dirname(__file__)
+print(current_directory)
+file_path = os.path.join(current_directory, 'resources', 'demo', '*.csv')
+
+print("Paths using OS:", file_path)
+
+
+
+globpath = glob.glob('data/*.csv')  # Update with your actual directory path
+  # Update with your actual directory path
+print(globpath)
+print(file_path)
+
+
 
 # Read the CSV files
-data = read_csv_files(filepaths)
+data = read_csv_files(globpath)
 
 
 
