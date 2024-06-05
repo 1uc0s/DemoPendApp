@@ -111,9 +111,11 @@ from dash import Dash, dcc, html
 
 
 app = Dash()
+server = app.server
 app.layout = html.Div([
     dcc.Graph(figure=fig)
 ])
+
 if __name__ == '__main__':
     app.run(use_reloader=False, debug = True)  # Turn of
-    server = app.server
+    
