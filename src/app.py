@@ -8,7 +8,7 @@ import os
 
 # Set Plotly to render charts using the web browser
 # pio.renderers.default = "browser"
-STEPS = 10
+STEPS = 1000
 # Function to read CSV files and prepare the data
 def read_csv_files(filepaths, n = STEPS):
     data = []
