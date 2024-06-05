@@ -6,7 +6,7 @@ import plotly.io as pio
 import glob
 
 # Set Plotly to render charts using the web browser
-pio.renderers.default = "browser"
+# pio.renderers.default = "browser"
 STEPS = 10
 # Function to read CSV files and prepare the data
 def read_csv_files(filepaths, n = STEPS):
@@ -75,7 +75,7 @@ def create_animation(frames, time_steps):
 
 # List of CSV file paths
 # filepaths = ['../datasets/pendulumR0.csv','../datasets/pendulumR0_2.csv']  # Update with your actual file paths
-filepaths = glob.glob('src/demo/*.csv')  # Update with your actual directory path
+filepaths = glob.glob('resources/demo/*.csv')  # Update with your actual directory path
 
 print("filepaths:", filepaths)
 
@@ -100,5 +100,5 @@ app.layout = html.Div([
     dcc.Graph(figure=fig)
 ])
 if __name__ == '__main__':
-    app.run_server(use_reloader=False, debug = True)  # Turn of
+    app.run(use_reloader=False, debug = True)  # Turn of
     server = app.server
