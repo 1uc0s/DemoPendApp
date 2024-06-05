@@ -75,7 +75,7 @@ def create_animation(frames, time_steps):
 
 # List of CSV file paths
 # filepaths = ['../datasets/pendulumR0.csv','../datasets/pendulumR0_2.csv']  # Update with your actual file paths
-filepaths = glob.glob('NumericalSim/demo/*.csv')  # Update with your actual directory path
+filepaths = glob.glob('src/demo/*.csv')  # Update with your actual directory path
 
 print("filepaths:", filepaths)
 
