@@ -38,7 +38,7 @@ def prepare_data_for_animation(data, dt=0.01, trail_length=50):
                 frame_data.append(go.Scatter(
                     x=x_vals,
                     y=y_vals,
-                    mode='markers+lines',
+                    mode='lines',
                     name=f'Trace {i+1}',
                     marker=dict(color=px.colors.qualitative.Plotly[i % len(px.colors.qualitative.Plotly)], opacity=1.0),
                     line=dict(color=px.colors.qualitative.Plotly[i % len(px.colors.qualitative.Plotly)], width=2)
@@ -47,7 +47,6 @@ def prepare_data_for_animation(data, dt=0.01, trail_length=50):
         frames.append(go.Frame(data=frame_data, name=f'time={t:.2f}'))
     return frames, time_steps
 
-# Function to create the animated plot
 def create_animation(frames, time_steps, charges):
     colors = ['red', 'green', 'blue']
     charge_scatter = [
@@ -69,15 +68,22 @@ def create_animation(frames, time_steps, charges):
             yaxis=dict(autorange=True),
             updatemenus=[dict(
                 type='buttons',
-                showactive=False,
-                buttons=[dict(label='Play',
-                              method='animate',
-                              args=[None, dict(frame=dict(duration=10, redraw=True), fromcurrent=True)])]
+                showactive=True,
+                buttons=[
+                    dict(label='Play',
+                         method='animate',
+                         args=[None, dict(frame=dict(duration=20, redraw=True), fromcurrent=True, transition=dict(duration=0))]),
+                    dict(label='Pause',
+                         method='animate',
+                         args=[[None], dict(frame=dict(duration=0, redraw=True), mode='immediate')])
+                ]
             )]
         ),
         frames=frames
     )
-    return fig 
+    return fig
+
+
 
 # List of CSV file paths
 current_directory = os.path.dirname(__file__)
@@ -107,8 +113,8 @@ from dash import Dash, dcc, html
 app = Dash(__name__)
 server = app.server
 app.layout = html.Div([
-    dcc.Graph(figure=fig)
-])
+    dcc.Graph(figure=fig, style={'height': '100vh', 'width': '100vw'})
+], style={'height': '100vh', 'width': '100vw'})
 
 if __name__ == '__main__':
     app.run(use_reloader=False, debug=True)
