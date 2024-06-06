@@ -20,6 +20,8 @@ def read_csv_files(filepaths, n=STEPS):
     for filepath in filepaths:
         df = pd.read_csv(filepath, names=['x', 'y', 'xdot', 'ydot'], skiprows=lambda x: x % 5)
         data.append(df[0:n])
+        #sort the data by the starting x value
+        data = sorted(data, key=lambda x: x['x'].iloc[0])
     return data
 
 # Function to prepare data for animation with fading trails
