@@ -5,6 +5,10 @@ import plotly.graph_objects as go
 import plotly.io as pio
 import glob
 import os
+import matplotlib.pyplot as plt
+
+import matplotlib.colors as mcolors
+
 
 # Set Plotly to render charts using the web browser
 # pio.renderers.default = "browser"
@@ -14,7 +18,7 @@ STEPS = 1000
 def read_csv_files(filepaths, n=STEPS):
     data = []
     for filepath in filepaths:
-        df = pd.read_csv(filepath, names=['x', 'y', 'xdot', 'ydot'], skiprows=lambda x: x % 10)
+        df = pd.read_csv(filepath, names=['x', 'y', 'xdot', 'ydot'], skiprows=lambda x: x % 5)
         data.append(df[0:n])
     return data
 
@@ -23,6 +27,10 @@ def prepare_data_for_animation(data, dt=0.01, trail_length=50):
     frames = []
     max_length = max(len(df) for df in data)
     time_steps = np.arange(0, max_length * dt, dt)
+    
+    # Generate a rainbow colormap
+    cmap = plt.get_cmap('jet', len(data))
+    colors = [mcolors.rgb2hex(cmap(i)) for i in range(cmap.N)]
     
     for t_index, t in enumerate(time_steps):
         frame_data = []
@@ -33,18 +41,24 @@ def prepare_data_for_animation(data, dt=0.01, trail_length=50):
             if end_index <= len(df):
                 x_vals = df['x'].iloc[start_index:end_index].tolist()
                 y_vals = df['y'].iloc[start_index:end_index].tolist()
-                opacities = np.linspace(0, 1, len(x_vals))
                 
                 frame_data.append(go.Scatter(
                     x=x_vals,
                     y=y_vals,
                     mode='lines',
                     name=f'Trace {i+1}',
-                    marker=dict(color=px.colors.qualitative.Plotly[i % len(px.colors.qualitative.Plotly)], opacity=1.0),
-                    line=dict(color=px.colors.qualitative.Plotly[i % len(px.colors.qualitative.Plotly)], width=2)
+                    marker=dict(color=colors[i], opacity=1.0),
+                    line=dict(color=colors[i], width=2)
                 ))
-                
-        frames.append(go.Frame(data=frame_data, name=f'time={t:.2f}'))
+
+        frames.append(go.Frame(
+            data=frame_data,
+            name=f'time={t:.2f}',
+            layout=go.Layout(
+                # xaxis=dict(autorange=False),
+                # yaxis=dict(autorange=False)
+            )
+        ))
     return frames, time_steps
 
 def create_animation(frames, time_steps, charges):
@@ -63,9 +77,9 @@ def create_animation(frames, time_steps, charges):
     fig = go.Figure(
         data=list(frames[0].data) + charge_scatter,
         layout=go.Layout(
-            title=dict(text='Traces Animation with Fading Trails'),
-            xaxis=dict(autorange=True),
-            yaxis=dict(autorange=True),
+            title=dict(text='Pendulum Trace near Charges'),
+            xaxis=dict(range=[-10, 10]),
+            yaxis=dict(range=[-10, 10]),
             updatemenus=[dict(
                 type='buttons',
                 showactive=True,
@@ -75,15 +89,16 @@ def create_animation(frames, time_steps, charges):
                          args=[None, dict(frame=dict(duration=20, redraw=True), fromcurrent=True, transition=dict(duration=0))]),
                     dict(label='Pause',
                          method='animate',
-                         args=[[None], dict(frame=dict(duration=0, redraw=True), mode='immediate')])
+                         args=[[None], dict(frame=dict(duration=0, redraw=True), mode='immediate')]),
+                    dict(label='Reset',
+                         method='animate',
+                         args=[[None], dict(frame=dict(duration=0, redraw=True), mode='immediate', transition=dict(duration=0)), [0]])  # Reset to initial frame
                 ]
             )]
         ),
         frames=frames
     )
     return fig
-
-
 
 # List of CSV file paths
 current_directory = os.path.dirname(__file__)
@@ -117,4 +132,4 @@ app.layout = html.Div([
 ], style={'height': '100vh', 'width': '100vw'})
 
 if __name__ == '__main__':
-    app.run(use_reloader=False, debug=True)
+    app.run(use_reloader=False, debug=False)
